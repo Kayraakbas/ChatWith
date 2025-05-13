@@ -12,7 +12,5 @@
 .externalNativeBuild
 .cxx
 local.properties
-
+/build
 # Project exclude paths
-/app/
-/gradle/
