@@ -47,9 +47,13 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
-    implementation("com.google.firebase:firebase-auth-ktx:22.1.2")
-    implementation("com.google.firebase:firebase-database-ktx:20.3.0")
-    implementation("com.google.firebase:firebase-firestore-ktx:24.10.0")
+
+    implementation (platform("com.google.firebase:firebase-bom:33.14.0"))
+
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-database")
+    implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-storage-ktx")
 
 
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
@@ -57,9 +61,8 @@ dependencies {
     implementation ("com.squareup.okhttp3:okhttp:4.11.0")
     implementation ("com.squareup.okhttp3:logging-interceptor:4.11.0")
 
-
-
-
+    // Coil for image loading
+    implementation("io.coil-kt:coil-compose:2.5.0")
 
     // Jetpack Compose BOM
     implementation(platform(libs.androidx.compose.bom))
@@ -69,6 +72,8 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material)
     implementation(libs.androidx.navigation.compose.android)
+    implementation(libs.firebase.storage.ktx)
+    implementation(libs.androidx.camera.core)
 
 
 

@@ -1,7 +1,7 @@
 package com.chatwith.app.model
 
 data class ChatMessage(
-    val isUser: Boolean = false,
+    val user: Boolean = false,
     val id: String = "",
     val sender: String = "",
     val text: String = "",

@@ -4,9 +4,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -30,9 +32,18 @@ fun HomeScreen(
     onLogoutClick: () -> Unit
 ) {
     val interFont = FontFamily(Font(R.font.inter_regular))
-    val characters = listOf("Picasso", "Leonardo Da Vinci", "Kobra Murat", "Michael Jackson", "Jesus", "Steve Jobs")
-    val filters = listOf("Artist", "Philosopher", "Actress", "Peppers")
+    val characters = listOf(
+        "Mustafa Kemal Atatürk" to "Leader",
+        "Picasso" to "Artist",
+        "Leonardo Da Vinci" to "Artist",
+        "Kobra Murat" to "Philosopher",
+        "Michael Jackson" to "Artist",
+        "Jesus" to "Philosopher",
+        "Steve Jobs" to "Philosopher"
+    )
+    val filters = listOf("All", "Artist", "Philosopher", "Actress", "Leader")
     var searchText by remember { mutableStateOf("") }
+    var selectedFilter by remember { mutableStateOf("All") }
 
     val colors = MaterialTheme.colorScheme
 
@@ -44,15 +55,26 @@ fun HomeScreen(
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
+
         ) {
+            Image(
+                painter = painterResource(id = R.drawable.logo),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(50.dp)
+                    .clip(CircleShape)
+                    .clickable { onProfileClick() }
+            )
+            Spacer(modifier = Modifier.width(10.dp))
             Text(
                 text = "Chat With",
                 fontFamily = interFont,
                 fontSize = 22.sp,
                 color = colors.onBackground
             )
+            Spacer(modifier = Modifier.weight(1f))
             TextButton(onClick = onLogoutClick) {
                 Text("Logout", color = colors.primary)
             }
@@ -70,7 +92,7 @@ fun HomeScreen(
                 Icon(
                     painter = painterResource(id = R.drawable.ic_search),
                     contentDescription = null,
-                    tint = colors.onSurface.copy(alpha = 0.6f)
+                    tint = colors.onSurface.copy(alpha = 0.4f)
                 )
             },
             modifier = Modifier
@@ -90,23 +112,25 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Row(
+        LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-            filters.forEach { filter ->
+            items(filters) { filter ->
                 AssistChip(
-                    onClick = {},
+                    onClick = { selectedFilter = filter },
                     label = {
                         Text(
                             text = filter,
                             fontSize = 12.sp,
                             fontFamily = interFont,
-                            color = colors.onSurface
+                            color = if (selectedFilter == filter) colors.primary else colors.onSurface
                         )
                     },
                     shape = RoundedCornerShape(50),
-                    colors = AssistChipDefaults.assistChipColors(containerColor = colors.surface)
+                    colors = AssistChipDefaults.assistChipColors(
+                        containerColor = if (selectedFilter == filter) colors.primary.copy(alpha = 0.2f) else colors.surface
+                    )
                 )
             }
         }
@@ -119,7 +143,12 @@ fun HomeScreen(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier.weight(1f)
         ) {
-            items(characters.filter { it.contains(searchText, ignoreCase = true) }) { name ->
+            items(
+                characters.filter { (name, category) ->
+                    (selectedFilter == "All" || category == selectedFilter) &&
+                            name.contains(searchText, ignoreCase = true)
+                }
+            ) { (name, _) ->
                 Card(
                     shape = RoundedCornerShape(20.dp),
                     colors = CardDefaults.cardColors(containerColor = colors.surface),
@@ -136,7 +165,18 @@ fun HomeScreen(
                         verticalArrangement = Arrangement.Center
                     ) {
                         Image(
-                            painter = painterResource(id = R.drawable.placeholder_avatar),
+                            painter = painterResource(
+                                id = when (name) {
+                                    "Mustafa Kemal Atatürk" -> R.drawable.`mustafa_kemal_ataturk`
+                                    "Picasso" -> R.drawable.picasso
+                                    "Leonardo Da Vinci" -> R.drawable.leonardo_da_vinci
+                                    "Kobra Murat" -> R.drawable.kobra_murat
+                                    "Michael Jackson" -> R.drawable.michael_jackson
+                                    "Jesus" -> R.drawable.jesus
+                                    "Steve Jobs" -> R.drawable.steve_jobs
+                                    else -> R.drawable.placeholder_avatar
+                                }
+                            ),
                             contentDescription = null,
                             modifier = Modifier
                                 .size(50.dp)
@@ -145,12 +185,6 @@ fun HomeScreen(
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(text = name, fontFamily = interFont, color = colors.onSurface)
                         Spacer(modifier = Modifier.height(4.dp))
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_heart),
-                            contentDescription = null,
-                            tint = colors.primary,
-                            modifier = Modifier.size(16.dp)
-                        )
                     }
                 }
             }
